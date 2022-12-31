@@ -103,7 +103,6 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
   return (
     <>
       {!formattedAddress ? (
-        //Used formatAddress to verify if the user is connect to deal with dehydration problem, but it`s not a elegant solution.
         <>
           <Flex justifyContent="center">
             {isMetamaskInstalled ? (
