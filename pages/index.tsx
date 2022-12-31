@@ -61,6 +61,7 @@ export default function Home() {
             name: (value as { name: string }).name,
             symbol: (value as { symbol: string }).symbol,
             last_price: (value as { current_price: number }).current_price,
+            image: (value as { image: string }).image,
           })
         );
 

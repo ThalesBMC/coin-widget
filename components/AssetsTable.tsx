@@ -101,12 +101,7 @@ export const AssetsTable = ({
               </Td>
               <Td w="40%">
                 <Stack isInline align="center">
-                  <Image
-                    src={`assets/icons/${token.symbol}.svg`}
-                    w="6"
-                    h="6"
-                    alt={token.symbol}
-                  />
+                  <Image src={token.image} w="6" h="6" alt={token.symbol} />
                   <Text fontSize="sm" color={color}>
                     {token.name}
                   </Text>

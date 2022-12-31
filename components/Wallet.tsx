@@ -119,10 +119,13 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
       );
 
       if (response) {
-        const data2 = await response.json();
-        console.log(parseFloat(data.formatted), parseFloat(data2.ethereum.usd));
+        const priceData = await response.json();
+        console.log(
+          parseFloat(data.formatted),
+          parseFloat(priceData.ethereum.usd)
+        );
         const value =
-          parseFloat(data.formatted) * parseFloat(data2.ethereum.usd);
+          parseFloat(data.formatted) * parseFloat(priceData.ethereum.usd);
 
         setUsdPrice(value.toString().slice(0, 6));
       }
@@ -183,7 +186,16 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
             height="min-content"
           >
             <Flex>
-              <Image src={`assets/icons/WNRG.svg`} alt="WNRG" w="6" h="6" />
+              <Image
+                src={
+                  data?.symbol === "NRG"
+                    ? `assets/icons/WNRG.svg`
+                    : `assets/icons/${data?.symbol.toUpperCase()}.svg`
+                }
+                alt="WNRG"
+                w="6"
+                h="6"
+              />
               <Text ml="2" fontWeight="bold">
                 {getNetworkName}
               </Text>
@@ -244,7 +256,11 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
                 <>
                   <Flex align="center" gap="4">
                     <Image
-                      src={`assets/icons/WNRG.svg`}
+                      src={
+                        data?.symbol === "NRG"
+                          ? `assets/icons/WNRG.svg`
+                          : `assets/icons/${data?.symbol.toUpperCase()}.svg`
+                      }
                       w="16"
                       h="16"
                       alt="nrg"
