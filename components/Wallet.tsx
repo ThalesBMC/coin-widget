@@ -12,7 +12,7 @@ import { useAccount, useConnect, useBalance } from "wagmi";
 
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { GoPrimitiveDot } from "react-icons/go";
-import { MdContentCopy, MdOpenInNew } from "react-icons/Md";
+import { MdContentCopy, MdOpenInNew } from "react-icons/md";
 
 import AssetsType from "../types/AssetsType";
 
