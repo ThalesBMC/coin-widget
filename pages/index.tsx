@@ -47,18 +47,24 @@ export default function Home() {
   const fetchAssetsData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://api.energiswap.exchange/v1/assets");
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+      );
+
       if (response) {
         const data = await response.json();
-
+        console.log(data);
         // Convert the data object into an array of AssetsType objects
 
-        const assetsData: AssetsType[] = Object.keys(data).map((key) => ({
-          ...data[key],
-          address: key,
-        }));
+        const filteredArray: AssetsType[] = Object.entries(data).map(
+          ([key, value]) => ({
+            name: (value as { name: string }).name,
+            symbol: (value as { symbol: string }).symbol,
+            last_price: (value as { current_price: number }).current_price,
+          })
+        );
 
-        return assetsData;
+        return filteredArray;
       } else {
         return [];
       }
@@ -75,11 +81,10 @@ export default function Home() {
       setIsLoading(false);
       if (assets) {
         setAssets(assets);
-        orderAssetsByPriceAscending();
       }
     }
     getAssetsData();
-  }, [orderAssetsByPriceAscending]);
+  }, []);
 
   return (
     <Flex height="100%" direction="column" mt="6">
