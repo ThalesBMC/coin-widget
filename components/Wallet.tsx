@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   Heading,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import { useAccount, useConnect, useBalance } from "wagmi";
 
@@ -18,9 +19,10 @@ import AssetsType from "../types/AssetsType";
 
 type AssetsProps = {
   assets: AssetsType[];
+  isLoading: Boolean;
 };
 
-export const Wallet = ({ assets }: AssetsProps) => {
+export const Wallet = ({ assets, isLoading }: AssetsProps) => {
   const [isMetamaskInstalled, setIsMetamaskInstalled] =
     useState<boolean>(false);
   const [formattedAddress, setFormattedAddress] = useState("");
@@ -35,7 +37,7 @@ export const Wallet = ({ assets }: AssetsProps) => {
 
   const { data } = useBalance({
     address: address,
-    token: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+    token: "0x1416946162b1c2c871a73b07e932d2fb6c932069",
   });
 
   useEffect(() => {
@@ -97,7 +99,7 @@ export const Wallet = ({ assets }: AssetsProps) => {
   useEffect(() => {
     setTokenBalance(data?.formatted.slice(0, 6));
   }, [tokenBalance, data?.formatted]);
-
+  console.log(isLoading);
   return (
     <>
       {!formattedAddress ? (
@@ -194,7 +196,7 @@ export const Wallet = ({ assets }: AssetsProps) => {
               gap="6"
             >
               <Text color="gray.500">Total Balance</Text>
-              {data?.formatted ? (
+              {!isLoading ? (
                 <>
                   <Flex align="center" gap="4">
                     <Image
@@ -214,7 +216,7 @@ export const Wallet = ({ assets }: AssetsProps) => {
                   </Flex>
                 </>
               ) : (
-                <>Loading</>
+                <Spinner mt="12" size="xl" />
               )}
             </Flex>
           </Flex>

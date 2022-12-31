@@ -11,6 +11,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Spinner,
 } from "@chakra-ui/react";
 import { AssetsTable } from "../components/AssetsTable";
 import { Wallet } from "../components/Wallet";
@@ -31,7 +32,7 @@ export default function Home() {
   const { toggleColorMode } = useColorMode();
   const color = useColorModeValue("gray.800", "whiteAlpha.900");
   const [assets, setAssets] = useState<AssetsType[]>([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [ascending, setAscending] = useState(true);
 
   const orderAssetsByPriceAscending = useCallback(() => {
@@ -54,6 +55,7 @@ export default function Home() {
 
   const fetchAssetsData = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch("https://api.energiswap.exchange/v1/assets");
       if (response) {
         const data = await response.json();
@@ -66,8 +68,11 @@ export default function Home() {
         }));
 
         return assetsData;
-      } else return [];
+      } else {
+        return [];
+      }
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -76,6 +81,7 @@ export default function Home() {
     // Fetch the assets data when the component mounts
     async function getAssetsData() {
       const assets = await fetchAssetsData();
+      setIsLoading(false);
       if (assets) {
         setAssets(assets);
         orderAssetsByPriceAscending();
@@ -123,15 +129,19 @@ export default function Home() {
 
           <TabPanels>
             <TabPanel>
-              <AssetsTable
-                assets={assets}
-                orderAscending={orderAssetsByPriceAscending}
-                orderDescending={orderAssetsByPriceDescending}
-                ascending={ascending}
-              />
+              {!isLoading ? (
+                <AssetsTable
+                  assets={assets}
+                  orderAscending={orderAssetsByPriceAscending}
+                  orderDescending={orderAssetsByPriceDescending}
+                  ascending={ascending}
+                />
+              ) : (
+                <Spinner mt="12" size="xl" />
+              )}
             </TabPanel>
             <TabPanel>
-              <Wallet assets={assets} />
+              <Wallet assets={assets} isLoading={isLoading} />
             </TabPanel>
           </TabPanels>
         </Tabs>
