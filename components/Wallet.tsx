@@ -27,6 +27,7 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
     useState<boolean>(false);
   const [formattedAddress, setFormattedAddress] = useState("");
   const [tokenBalance, setTokenBalance] = useState<string | undefined>("");
+  const [usdPrice, setUsdPrice] = useState("");
 
   const { address } = useAccount();
   const { connect } = useConnect({
@@ -92,33 +93,6 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
     }
   }, [address]);
 
-  const getUsdPrice = useMemo(() => {
-    if (!assets || !data) {
-      return 0;
-    }
-
-    if (data?.symbol === "NRG") {
-      const filteredToken = assets.find((e) => e.symbol === "WNRG");
-
-      if (!filteredToken) {
-        return 0;
-      }
-      const value = filteredToken.last_price * parseFloat(data.formatted);
-
-      return value.toString().slice(0, 6);
-    } else {
-      const filteredToken = assets.find((e) => e.symbol === data.symbol);
-
-      if (!filteredToken) {
-        return 0;
-      }
-
-      const value = filteredToken.last_price * parseFloat(data.formatted);
-
-      return value.toString().slice(0, 6);
-    }
-  }, [assets, data]);
-
   const formatAddress = useCallback(() => {
     if (!address) return "";
     return `${address?.slice(0, 6)}...${address?.slice(
@@ -134,6 +108,27 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
   useEffect(() => {
     setTokenBalance(data?.formatted.slice(0, 6));
   }, [tokenBalance, data?.formatted]);
+
+  useEffect(() => {
+    const getUsdPrice = async () => {
+      if (!data) {
+        return 0;
+      }
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+      );
+
+      if (response) {
+        const data2 = await response.json();
+        console.log(parseFloat(data.formatted), parseFloat(data2.ethereum.usd));
+        const value =
+          parseFloat(data.formatted) * parseFloat(data2.ethereum.usd);
+
+        setUsdPrice(value.toString().slice(0, 6));
+      }
+    };
+    getUsdPrice();
+  }, [data]);
 
   const getNetworkName = useMemo(() => {
     const chainId = chain?.id;
@@ -260,7 +255,7 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
                   </Flex>
                   <Flex align="center">
                     <Text fontSize="48" fontWeight="bold">
-                      $ {getUsdPrice}
+                      $ {usdPrice}
                     </Text>
                   </Flex>
                 </>
