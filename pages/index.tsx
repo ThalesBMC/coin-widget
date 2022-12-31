@@ -17,15 +17,7 @@ import { Wallet } from "../components/Wallet";
 import { AiFillHome } from "react-icons/ai";
 import { IoMdWallet } from "react-icons/io";
 import { RiSunFill } from "react-icons/ri";
-
-interface AssetsType {
-  name: string;
-  symbol: string;
-  last_price: number;
-  maker_fee: number;
-  taker_fee: number;
-  address: string;
-}
+import AssetsType from "../types/AssetsType";
 
 export default function Home() {
   const { toggleColorMode } = useColorMode();
