@@ -2,40 +2,24 @@ import React, { useState } from "react";
 import {
   Box,
   Flex,
-  Heading,
   Icon,
-  Link,
   Stack,
   Table,
   Thead,
   Tbody,
   Tr,
-  Button,
   Th,
   Td,
   Text,
-  useColorMode,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   useColorModeValue,
   Image,
 } from "@chakra-ui/react";
 
 import { GoTriangleUp, GoTriangleDown } from "react-icons/go";
 import { Pagination } from "./Pagination";
-interface AssetsType {
-  name: string;
-  symbol: string;
-  last_price: number;
-  maker_fee: number;
-  taker_fee: number;
-  address: string;
-}
+import AssetsType from "../types/AssetsType";
 
-type AssetsProps = {
+type TableProps = {
   assets: AssetsType[];
   orderAscending: () => void;
   orderDescending: () => void;
@@ -47,7 +31,7 @@ export const AssetsTable = ({
   orderAscending,
   orderDescending,
   ascending,
-}: AssetsProps) => {
+}: TableProps) => {
   const color = useColorModeValue("gray.800", "whiteAlpha.900");
   const borderColor = useColorModeValue("gray.100", "gray.800");
 

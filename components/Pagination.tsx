@@ -1,44 +1,21 @@
-import React from "react";
-import {
-  Box,
-  Flex,
-  Heading,
-  Icon,
-  Link,
-  Stack,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Button,
-  Th,
-  Td,
-  Text,
-  useColorMode,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  useColorModeValue,
-  Image,
-} from "@chakra-ui/react";
+import React, { useCallback } from "react";
+import { Flex, Icon, Text } from "@chakra-ui/react";
 
 import { BiSkipPrevious, BiSkipNext } from "react-icons/bi";
 export const Pagination = (props: any) => {
   const { numPages, currentPage, onPageChange } = props;
 
-  const handlePrevClick = () => {
+  const handlePrevClick = useCallback(() => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
     }
-  };
+  }, [currentPage, onPageChange]);
 
-  const handleNextClick = () => {
+  const handleNextClick = useCallback(() => {
     if (currentPage < numPages) {
       onPageChange(currentPage + 1);
     }
-  };
+  }, [currentPage, onPageChange, numPages]);
 
   return (
     <Flex justify="center">
@@ -49,7 +26,7 @@ export const Pagination = (props: any) => {
         h="6"
         cursor="pointer"
       />
-      <span>{currentPage}</span>
+      <Text as="span">{currentPage}</Text>
       <Icon
         as={BiSkipNext}
         onClick={handleNextClick}

@@ -37,15 +37,18 @@ export default function Home() {
   async function fetchAssetsData() {
     try {
       const response = await fetch("https://api.energiswap.exchange/v1/assets");
-      const data = await response.json();
+      if (response) {
+        const data = await response.json();
 
-      // Convert the data object into an array of AssetsType objects
-      const assetsData: AssetsType[] = Object.keys(data).map((key) => ({
-        ...data[key],
-        address: key,
-      }));
+        // Convert the data object into an array of AssetsType objects
 
-      return assetsData;
+        const assetsData: AssetsType[] = Object.keys(data).map((key) => ({
+          ...data[key],
+          address: key,
+        }));
+
+        return assetsData;
+      } else return [];
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +78,6 @@ export default function Home() {
       const assets = await fetchAssetsData();
       if (assets) {
         setAssets(assets);
-        orderAssetsByPriceAscending();
       }
     }
     getAssetsData();
