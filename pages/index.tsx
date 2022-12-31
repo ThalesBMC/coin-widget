@@ -34,26 +34,6 @@ export default function Home() {
 
   const [ascending, setAscending] = useState(true);
 
-  async function fetchAssetsData() {
-    try {
-      const response = await fetch("https://api.energiswap.exchange/v1/assets");
-      if (response) {
-        const data = await response.json();
-
-        // Convert the data object into an array of AssetsType objects
-
-        const assetsData: AssetsType[] = Object.keys(data).map((key) => ({
-          ...data[key],
-          address: key,
-        }));
-
-        return assetsData;
-      } else return [];
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const orderAssetsByPriceAscending = useCallback(() => {
     setAssets(
       assets.sort((a, b) =>
@@ -72,12 +52,33 @@ export default function Home() {
     setAscending(false);
   }, [assets]);
 
+  const fetchAssetsData = async () => {
+    try {
+      const response = await fetch("https://api.energiswap.exchange/v1/assets");
+      if (response) {
+        const data = await response.json();
+
+        // Convert the data object into an array of AssetsType objects
+
+        const assetsData: AssetsType[] = Object.keys(data).map((key) => ({
+          ...data[key],
+          address: key,
+        }));
+
+        return assetsData;
+      } else return [];
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     // Fetch the assets data when the component mounts
     async function getAssetsData() {
       const assets = await fetchAssetsData();
       if (assets) {
         setAssets(assets);
+        orderAssetsByPriceAscending();
       }
     }
     getAssetsData();
