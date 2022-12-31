@@ -9,7 +9,7 @@ import {
   Button,
   Spinner,
 } from "@chakra-ui/react";
-import { useAccount, useConnect, useBalance } from "wagmi";
+import { useAccount, useConnect, useBalance, useNetwork } from "wagmi";
 
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { GoPrimitiveDot } from "react-icons/go";
@@ -34,17 +34,52 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
   });
   const bg = useColorModeValue("whiteAlpha.900", "gray.900");
   const borderColor = useColorModeValue("gray.100", "gray.700");
-
+  const { chain } = useNetwork();
   const { data } = useBalance({
     address: address,
-    token: "0x1416946162b1c2c871a73b07e932d2fb6c932069",
+    chainId: chain?.id,
   });
 
   useEffect(() => {
-    if ((window as any).ethereum) {
-      //check if Metamask wallet is installed
-      setIsMetamaskInstalled(true);
-    }
+    const verifyMetamaskAndNetwork = async () => {
+      // Check if Metamask is installed and `window` is available
+      if (typeof window !== "undefined" && window.ethereum) {
+        setIsMetamaskInstalled(true);
+
+        // Check if the network is correct
+        if (window.ethereum.networkVersion !== 39797) {
+          try {
+            // Attempt to switch to the correct network
+            await window.ethereum.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: "0x9B75" }],
+            });
+          } catch (err: any) {
+            console.log("Error switching networks:", err);
+            // If the error is code 4902, add the correct network
+            if (err.code === 4902) {
+              await window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                  {
+                    chainName: "Energi Mainnet",
+                    chainId: "0x9B75",
+                    nativeCurrency: {
+                      name: "Energi",
+                      decimals: 18,
+                      symbol: "NRG",
+                    },
+                    rpcUrls: ["https://nodeapi.energi.network"],
+                    blockExplorerUrls: ["https://explorer.energi.network/"],
+                  },
+                ],
+              });
+            }
+          }
+        }
+      }
+    };
+    verifyMetamaskAndNetwork();
   }, []);
 
   const copyTextToClipboard = useCallback(async () => {
@@ -99,7 +134,17 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
   useEffect(() => {
     setTokenBalance(data?.formatted.slice(0, 6));
   }, [tokenBalance, data?.formatted]);
-  console.log(isLoading);
+
+  const getNetworkName = useMemo(() => {
+    const chainId = chain?.id;
+    switch (chainId) {
+      case 1:
+        return "Main Ethereum network";
+      case 39797:
+        return "Energi Network";
+    }
+  }, [chain?.id]);
+
   return (
     <>
       {!formattedAddress ? (
@@ -145,7 +190,7 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
             <Flex>
               <Image src={`assets/icons/WNRG.svg`} alt="WNRG" w="6" h="6" />
               <Text ml="2" fontWeight="bold">
-                Energi Network
+                {getNetworkName}
               </Text>
             </Flex>
             <Flex align="center" gap="1">
@@ -179,10 +224,15 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
                 h="6"
                 cursor="pointer"
                 onClick={() =>
-                  window.open(
-                    `https://explorer.energi.network/address/${address}/transactions`,
-                    "_blank"
-                  )
+                  chain?.id === 39797
+                    ? window.open(
+                        `https://explorer.energi.network/address/${address}`,
+                        "_blank"
+                      )
+                    : window.open(
+                        `https://etherscan.io/address/${address}`,
+                        "_blank"
+                      )
                 }
               />
             </Flex>
