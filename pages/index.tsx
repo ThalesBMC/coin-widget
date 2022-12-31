@@ -53,7 +53,7 @@ export default function Home() {
 
       if (response) {
         const data = await response.json();
-        console.log(data);
+
         // Convert the data object into an array of AssetsType objects
 
         const filteredArray: AssetsType[] = Object.entries(data).map(
