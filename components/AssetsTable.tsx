@@ -107,7 +107,7 @@ export const AssetsTable = ({
                   </Text>
                 </Stack>
               </Td>
-              <Td width="20%">{token.symbol}</Td>
+              <Td width="20%">{token.symbol.toUpperCase()}</Td>
 
               <Td width="20%">
                 <Text>${token.last_price.toLocaleString("en-US")}</Text>
