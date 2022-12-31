@@ -111,27 +111,35 @@ export const Wallet = ({ assets, isLoading }: AssetsProps) => {
 
   useEffect(() => {
     const getUsdPrice = async () => {
-      if (!data) {
+      if (!data || !chain?.id) {
         return 0;
       }
+
+      let chainName;
+
+      switch (chain.id) {
+        case 1:
+          chainName = "ethereum";
+          break;
+        case 39797:
+          chainName = "energi";
+          break;
+      }
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        `https://api.coingecko.com/api/v3/simple/price?ids=${chainName}&vs_currencies=usd`
       );
 
-      if (response) {
+      if (response && chainName) {
         const priceData = await response.json();
-        console.log(
-          parseFloat(data.formatted),
-          parseFloat(priceData.ethereum.usd)
-        );
+
         const value =
-          parseFloat(data.formatted) * parseFloat(priceData.ethereum.usd);
+          parseFloat(data.formatted) * parseFloat(priceData[chainName].usd);
 
         setUsdPrice(value.toString().slice(0, 6));
       }
     };
     getUsdPrice();
-  }, [data]);
+  }, [data, chain?.id]);
 
   const getNetworkName = useMemo(() => {
     const chainId = chain?.id;
