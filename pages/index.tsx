@@ -1,4 +1,3 @@
-import { Inter } from "@next/font/google";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Flex,
